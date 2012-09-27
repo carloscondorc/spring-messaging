@@ -1,5 +1,7 @@
 package com.malsolo.spring.messaging.jms.core;
 
+import java.util.Random;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +46,20 @@ public class ProducerImpl implements Producer {
 			}
 		});
 		
-	} 
+	}
+	
+	@Override
+	@Async
+	public void doSend() {
+		long id = new Random().nextInt(100);
+		try {
+			Thread.sleep(id*100);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		Information information = new Information(id, String.valueOf(id).toUpperCase());
+		this.send(information);
+		logger.info(">>>>> ASYNCHRONOUSLY SENT INFO IN "+Thread.currentThread().getName()+": "+information);
+	}
 
 }

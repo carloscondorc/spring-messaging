@@ -5,5 +5,7 @@ import com.malsolo.spring.messaging.model.Information;
 public interface Producer {
 
 	public abstract void send(Information information);
+	
+	public void doSend();
 
 }

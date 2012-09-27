@@ -1,5 +1,7 @@
 package com.malsolo.spring.messaging.jms.core;
 
+import java.util.Random;
+
 import javax.jms.MapMessage;
 import javax.jms.Message;
 
@@ -8,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +49,20 @@ public class ConsumerImpl implements Consumer {
 			throw new Exception("Can't receive information " + (message!=null?message.toString():"message null"));
 		}
 		
+	}
+
+	@Override
+	@Async
+	public void doReceive() throws Exception {
+		long id = new Random().nextInt(100);
+		try {
+			Thread.sleep(id*100);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		Information information = this.receive();
+		
+		logger.info(">>>>> ASYNCHRONOUSLY RECEIVED INFO IN "+Thread.currentThread().getName()+": "+information);
 	}
 
 }
